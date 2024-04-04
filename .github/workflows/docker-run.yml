@@ -13,8 +13,8 @@ jobs:
     steps:
     - name: Pull and run Docker image
       run: |
-        docker pull tejaswijosyula/CICD_ASSIGNMENT:latest
-        docker run --name model_test tejaswijosyula/CICD_ASSIGNMENT:latest
+        docker pull tejaswijosyula/cicdassignment:latest
+        docker run --name model_test tejaswijosyula/cicdassignment:latest
     - name: Check test output
       run: |
         output=$(docker logs model_test)
