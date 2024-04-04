@@ -1,0 +1,26 @@
+name: Test
+
+on: 
+  workflow_run:
+    workflows: ["Train"]
+    types:
+      - completed
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+    - name: Pull and run Docker image
+      run: |
+        docker pull tejaswijosyula/CICD_ASSIGNMENT:latest
+        docker run --name model_test tejaswijosyula/CICD_ASSIGNMENT:latest
+    - name: Check test output
+      run: |
+        output=$(docker logs model_test)
+        echo "$output"
+        if [[ "$output" == *"Score: 0.5"* ]]; then
+          exit 0
+        else
+          exit 1
+        fi
