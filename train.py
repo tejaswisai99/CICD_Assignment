@@ -3,7 +3,8 @@ from sklearn.linear_model import LogisticRegression
 import pickle
 import numpy as np
 
-df = pd.read_csv("data/train.csv")
+#Checking the wrong file, so exception occurs and train step itself fails
+df = pd.read_csv("data/train1.csv")
 X = df.drop(columns=['Disease']).to_numpy()
 y = df['Disease'].to_numpy()
 labels = np.sort(np.unique(y))
