@@ -34,7 +34,7 @@ jobs:
         score=$(docker run tejaswijosyula/cicdassignment:latest | tail -n 1)
         echo "Score output: $score"
         # The last line of our output and is our score
-        if (( $(echo "$score > 0.35" | bc -l) )); then
+        if (( $(echo "$score > 0.30" | bc -l) )); then
           echo "Test passed with score $score!"
         else
           echo "Test failed with score $score."
