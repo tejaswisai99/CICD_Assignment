@@ -19,11 +19,11 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Pull the Docker image from Docker Hub
-      run: docker pull tejaswijosyula/cicdassignment:$(date +%s)
+      run: docker pull tejaswijosyula/cicdassignment
     
     - name: Run the Docker container
       id: test
-      run: docker run tejaswijosyula/cicdassignment:$(date +%s)
+      run: docker run tejaswijosyula/cicdassignment
 
     - name: Check test results
       run: |
