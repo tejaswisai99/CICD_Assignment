@@ -5,7 +5,7 @@ on:
     branches: [main]
 
 jobs:
-  build-and-push:
+  train:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -23,3 +23,20 @@ jobs:
         file: Dockerfile
         push: true
         tags:  tejaswijosyula/cicdassignment:latest
+
+  test:
+    needs: train
+    runs-on: ubuntu-latest
+    if: success()
+    steps:
+    - name: Pull and run the Docker image, check for score
+      run: |
+        score=$(docker run tejaswijosyula/cicdassignment:latest | tail -n 1)
+        echo "Score output: $score"
+        # The last line of our output and is our score
+        if (( $(echo "$score > 0.35" | bc -l) )); then
+          echo "Test passed with score $score!"
+        else
+          echo "Test failed with score $score."
+          exit 1
+        fi    
