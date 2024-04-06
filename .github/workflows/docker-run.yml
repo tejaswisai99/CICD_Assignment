@@ -1,11 +1,16 @@
 name: Test
 
-on: 
+on:
+  pull_request:
+    branches: [main]
+
   workflow_run:
     workflows: ["Train"]
-    branches: [main]
-    types:
-      - completed
+    types: 
+    - completed
+  
+
+
 
 jobs:
   test:
@@ -18,18 +23,14 @@ jobs:
         username: ${{ secrets.DOCKER_USER_NAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Pull the Docker image from Docker Hub
-      run: docker pull tejaswijosyula/cicdassignment:$(date +%s)
-    
-    - name: Run the Docker container
-      id: test
-      run: docker run tejaswijosyula/cicdassignment:$(date +%s)
-
-    - name: Check test results
+    - name: Pull and run the Docker image, check for score
       run: |
-        if [ "${{ steps.test.outputs.score }}" > 0.35 ]; then
-          echo "Test passed!"
+        score=$(docker run tejaswijosyula/cicdassignment:latest | tail -n 1)
+        echo "Score output: $score"
+        # The last line of our output and is our score
+        if (( $(echo "$score > 0.35" | bc -l) )); then
+          echo "Test passed with score $score!"
         else
-          echo "Test failed."
+          echo "Test failed with score $score."
           exit 1
         fi
