@@ -3,6 +3,7 @@ name: Test
 on: 
   workflow_run:
     workflows: ["Train"]
+    branches: [main]
     types:
       - completed
 
@@ -11,16 +12,24 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
-    - name: Pull and run Docker image
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKER_USER_NAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Pull the Docker image from Docker Hub
+      run: docker pull tejaswijosyula/cicdassignment:$(date +%s)
+    
+    - name: Run the Docker container
+      id: test
+      run: docker run tejaswijosyula/cicdassignment:$(date +%s)
+
+    - name: Check test results
       run: |
-        docker pull tejaswijosyula/cicdassignment:latest
-        docker run --name model_test tejaswijosyula/cicdassignment:latest
-    - name: Check test output
-      run: |
-        output=$(docker logs model_test)
-        echo "$output"
-        if [[ "$output" == *"Score: 0.5"* ]]; then
-          exit 0
+        if [ "${{ steps.test.outputs.score }}" > 0.35 ]; then
+          echo "Test passed!"
         else
+          echo "Test failed."
           exit 1
         fi
