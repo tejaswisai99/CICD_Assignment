@@ -3,8 +3,8 @@ name: Test
 on: 
   workflow_run:
     workflows: ["Train"]
-    types:
-      - completed
+    types: [completed]
+
 
 
 jobs:
